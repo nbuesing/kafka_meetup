@@ -1,0 +1,40 @@
+.nation {
+    fill: #ddd;
+}
+
+.states {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+}
+
+.red {
+    fill: #f00;
+    visibility: hidden;
+}
+
+.blue {
+    fill: #00f;
+    stroke-width: 1px;
+    visibility: hidden;
+}
+
+.airport {
+    fill: #000;
+    stroke-width: 1px;
+    visibility: hidden;
+}
+
+.connection {
+    fill: none;
+    stroke: rgb(0, 255, 0);
+    stroke-width: 1.5;
+    visibility: hidden;
+}
+
+.allconnection {
+    fill: none;
+    stroke: rgb(0, 128, 128);
+    stroke-width: 1;
+    visibility: hidden;
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<script src="d3/d3.v4.min.js"></script>
+<script src="d3/topojson.v2.min.js"></script>
+<script>
+
+    var url = window.location.href.split('?')[0];
+    var urlParams = new URLSearchParams(window.location.search);
+    var slideNumber =  urlParams.get('slide') != null ? parseInt(urlParams.get('slide')) : 0;
+
+    function nextSlide() {
+        window.location = url + "?slide=" + (slideNumber + 1);
+    }
+
+    function previousSlide() {
+        if (slideNumber == 0) {
+            return;
+        }
+        window.location = url + "?slide=" + (slideNumber - 1);
+    }
+
+</script>
+</head>
+<body>
+<button type="button" onclick="previousSlide()">Previous</button>
+<button type="button" onclick="nextSlide()">Next</button>
+<br/>
+<svg width="960" height="600"></svg>
+<script>
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height");
+
+    var projection = d3.geoAlbersUsa().scale(1280).translate([480, 300]);
+    var path = d3.geoPath();
+    var path2 = d3.geoPath(projection);
+
+    d3.queue()
+        .defer(d3.json, "us-10m.v1.json")
+        .defer(d3.json, "slides/grid")
+        .defer(d3.json, "slides/slideA?slide=" + slideNumber)
+        .await(ready);
+
+    function ready(error, us, grid, colored) {
+        if (error) throw error;
+
+        svg.append("path")
+            .datum(topojson.feature(us, us.objects.nation))
+            .attr("class", "nation")
+            .attr("d", path);
+
+        svg.append("path")
+            .datum(topojson.mesh(us, us.objects.states, function (a, b) {
+                return a !== b;
+            }))
+            .attr("class", "states")
+            .attr("d", path);
+
+
+        svg.selectAll("grids")
+            .data(grid)
+            .enter().append("path")
+            .attr("d", path2)
+            .attr("style", "fill:none;stroke:purple;stroke-width:1");
+
+        svg.selectAll("colored")
+            .data(colored)
+            .enter().append("path")
+            .attr("d", path2)
+            .attr("style", function (d) { return d.properties ? d.properties.style : ""; });
+    }
+</script>
+</body>
+</html>
